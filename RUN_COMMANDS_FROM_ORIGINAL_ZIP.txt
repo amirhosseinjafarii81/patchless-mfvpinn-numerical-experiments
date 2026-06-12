@@ -1,0 +1,129 @@
+S="/home/amirhossein/projects/tfproj/rbfproj"; PY="/home/amirhossein/venvs/tf/bin/python"; SCRIPT="$S/meshfree_mfvpinn.py"; cd "$S" || exit 1; set -euo pipefail; RUN="patchless_check_$(date +%Y%m%d_%H%M%S)"; OUT="$S/runs/$RUN"; mkdir -p "$OUT"; export CUDA_VISIBLE_DEVICES=0 TF_CPP_MIN_LOG_LEVEL=2 TF_FORCE_GPU_ALLOW_GROWTH=true TF_GPU_ALLOCATOR=cuda_malloc_async TF_XLA_FLAGS="--tf_xla_auto_jit=0" TF_DETERMINISTIC_OPS=1 CUBLAS_WORKSPACE_CONFIG=":16:8" PYTHONHASHSEED=0; "$PY" "$SCRIPT" --outdir "$OUT" --seed 2000 --dtype float32 --lift coons --bubble product --bubble-power 1.0 --outer-iters 12 --snapshot-every 1 --target-nanchor 1000 --anchor-growth-policy strategy1 --mark-frac 0.75 --mark-cap 0.30 --run-both-cm 1 --cm-list 4,9 --outer-iters-cm9 12 --cm-seed-offset 0 --compare-metric H1_raw --adaptive eta --eta-power 1.5 --laplace-h 1e-3 --whiten-mode energy --whiten-eps 1e-12 --kernel wendland_c2 --kernel-cutoff 4.0 --nq-global 65536 --ncand 65536 --nq-factor 4.0 --kdtree-prune 1 --use-stencil-bank 1 --kdtree-report 1 --deterministic-batching 1 --freeze-candidates 1 --disable-xla 1 --h1-use-giqmc 1 --h1-freeze-importance 1 --h1-freeze-after-calls 1 --h1-mono-enforce 1 --h1-mono-hard 0 --lbfgs-maxiter-next 0 --lbfgs-maxiter-first 0 | tee "$OUT/log.txt"
+
+
+OUT=/home/amirhossein/projects/tfproj/rbfproj/run_strategy3/gtx1650_strategy3_opt_20260327_201448
+
+/home/amirhossein/venvs/tf/bin/python /home/amirhossein/projects/tfproj/rbfproj/fig4_5_patchless.py \
+  --outdir "$OUT" \
+  --cm4-npz "$OUT/snapshots_patchless_cm4.npz" \
+  --cm9-npz "$OUT/snapshots_patchless_cm9.npz" \
+  --size-scale 2500 \
+  --size-min 2 \
+  --size-max 100
+
+
+استراتژی دوم:
+
+S="/home/amirhossein/projects/tfproj/rbfproj"; PY="/home/amirhossein/venvs/tf/bin/python"; SCRIPT="$S/patchless_mfvpinn_strategy2.py"; cd "$S" || exit 1; set -euo pipefail; RUN="gtx1650_cm4_cm9_journal_grade_$(date +%Y%m%d_%H%M%S)"; OUT="$S/run_strategy2/$RUN"; mkdir -p "$OUT"; export CUDA_VISIBLE_DEVICES=0 TF_CPP_MIN_LOG_LEVEL=2 TF_FORCE_GPU_ALLOW_GROWTH=true TF_GPU_ALLOCATOR=cuda_malloc_async TF_XLA_FLAGS="--tf_xla_auto_jit=0" TF_DETERMINISTIC_OPS=1 CUBLAS_WORKSPACE_CONFIG=":4096:8" PYTHONHASHSEED=0; "$PY" "$SCRIPT" --outdir "$OUT" --seed 2000 --dtype float32 --lift coons --bubble product --bubble-power 1.0 --outer-iters 9 --snapshot-every 1 --target-nanchor 10000 --anchor-growth-policy strategy2 --mark-frac 0.75 --mark-cap 0.30 --run-both-cm 1 --cm-list 4,9 --outer-iters-cm9 9 --cm-seed-offset 0 --compare-metric H1_raw --adaptive eta --eta-power 1.5 --laplace-h 1e-3 --whiten-mode energy --whiten-eps 1e-12 --kernel wendland_c2 --kernel-cutoff 3.6 --nq-global 16384 --ncand 16384 --nq-factor 3.0 --kdtree-prune 1 --kdtree-leaf 36 --kdtree-dense-ratio 0.40 --use-stencil-bank 1 --stencil-bank-k 48 --stencil-smax 96 --deterministic-batching 1 --freeze-candidates 1 --disable-xla 1 --h1-use-giqmc 1 --h1-freeze-importance 1 --h1-freeze-after-calls 1 --h1-mono-enforce 1 --h1-mono-hard 0 --lbfgs-maxiter-first 0 --lbfgs-maxiter-next 0 | tee "$OUT/log.txt"
+
+
+
+استراتژی سوم:
+
+
+S="/home/amirhossein/projects/tfproj/rbfproj"; PY="/home/amirhossein/venvs/tf/bin/python"; SCRIPT="$S/patchless_mfvpinn_strategy3.py"; cd "$S" || exit 1; set -euo pipefail; RUN="gtx1650_strategy3_research_$(date +%Y%m%d_%H%M%S)"; OUT="$S/run_strategy3/$RUN"; mkdir -p "$OUT"; export CUDA_VISIBLE_DEVICES=0 TF_CPP_MIN_LOG_LEVEL=2 TF_FORCE_GPU_ALLOW_GROWTH=true TF_GPU_ALLOCATOR=cuda_malloc_async TF_XLA_FLAGS="--tf_xla_auto_jit=0" TF_DETERMINISTIC_OPS=1 CUBLAS_WORKSPACE_CONFIG=":4096:8" PYTHONHASHSEED=0; "$PY" "$SCRIPT" --outdir "$OUT" --seed 2000 --dtype float32 --lift coons --bubble product --bubble-power 1.0 --outer-iters 9 --snapshot-every 1 --target-nanchor 10000 --anchor-growth-policy strategy3 --mark-frac 0.85 --mark-cap 0.45 --mark-frac-l 0.75 --mark-cap-l 0.35 --anchor-slg-gap 3 --l-min-grow 1 --slg-level-penalty 0.12 --run-both-cm 1 --cm-list 4,9 --outer-iters-cm9 9 --cm-seed-offset 0 --compare-metric H1_raw --adaptive eta --eta-power 2.0 --laplace-h 1e-3 --whiten-mode energy --whiten-eps 1e-12 --kernel wendland_c2 --kernel-cutoff 3.6 --nq-global 8192 --ncand 8192 --nq-factor 3.0 --kdtree-prune 1 --kdtree-leaf 36 --kdtree-dense-ratio 0.40 --use-stencil-bank 1 --stencil-bank-k 48 --stencil-smax 96 --deterministic-batching 1 --freeze-candidates 1 --disable-xla 1 --h1-use-giqmc 1 --h1-freeze-importance 1 --h1-freeze-after-calls 1 --h1-mono-enforce 1 --h1-mono-hard 0 --lbfgs-maxiter-first 0 --lbfgs-maxiter-next 0 | tee "$OUT/log.txt"
+
+
+
+دستور اجرای ذخیره اطلاعات لاگ و اسنپ شات های استراتژی اول و سوم:
+
+S="/home/amirhossein/projects/tfproj/rbfproj"
+PY="/home/amirhossein/venvs/tf/bin/python"
+$PY $S/extract_history_from_runlog_patchless.py \
+  --log $S/runs/patchless_check_20260312_133444/log.txt \
+  --out $S/runs/patchless_check_20260312_133444/history_patchless.csv
+
+
+$PY $S/extract_history_from_snapshots_patchless.py \
+  --npz $S/runs/patchless_check_20260312_133444/snapshots_patchless_cm9.npz \
+  --out $S/runs/patchless_check_20260312_133444/snapshots_stats.csv
+
+
+$PY $S/extract_history_from_runlog_patchless.py \
+  --log $S/run_strategy3/gtx1650_strategy3_opt_20260327_201448/log.txt \
+  --out $S/run_strategy3/gtx1650_strategy3_opt_20260327_201448/history_patchless.csv
+
+
+$PY $S/extract_history_from_snapshots_patchless.py \
+  --npz $S/run_strategy3/gtx1650_strategy3_opt_20260327_201448/snapshots_patchless_cm9.npz \
+  --out $S/run_strategy3/gtx1650_strategy3_opt_20260327_201448/snapshots_stats.csv
+
+
+شکل 12:
+
+
+OUT3=/home/amirhossein/projects/tfproj/rbfproj/run_strategy3/gtx1650_strategy3_opt_20260327_201448
+OUT1=/home/amirhossein/projects/tfproj/rbfproj/runs/patchless_check_20260312_133444
+
+CUDA_VISIBLE_DEVICES=0 \
+/home/amirhossein/venvs/tf/bin/python /home/amirhossein/projects/tfproj/rbfproj/fig12_indicator_importance_patchless.py \
+  --outdir "$out_fig12_patchless" \
+  --left-npz  "$OUT1/snapshots_strategy1_cm9.npz"  --left-key  P613 \
+  --right-npz "$OUT3/snapshots_strategy3_cm9.npz" --right-key P25 \
+  --indicator-mode weak-residual \
+  2>&1 | tee "$OUT3/fig12.log"
+
+استراتژی 4:
+
+S="/home/amirhossein/projects/tfproj/rbfproj"; PY="/home/amirhossein/venvs/tf/bin/python"; SCRIPT="$S/patchless_mfvpinn_strategy4.py"; cd "$S" || exit 1; set -euo pipefail; RUN="patchless_strategy4_$(date +%Y%m%d_%H%M%S)"; OUT="$S/runs/$RUN"; mkdir -p "$OUT"; export CUDA_VISIBLE_DEVICES=0 TF_CPP_MIN_LOG_LEVEL=2 TF_FORCE_GPU_ALLOW_GROWTH=true TF_GPU_ALLOCATOR=cuda_malloc_async TF_XLA_FLAGS="--tf_xla_auto_jit=0" TF_DETERMINISTIC_OPS=1 CUBLAS_WORKSPACE_CONFIG=":16:8" PYTHONHASHSEED=0; "$PY" "$SCRIPT" --outdir "$OUT" --seed 2000 --dtype float32 --lift coons --bubble product --bubble-power 1.0 --outer-iters 12 --snapshot-every 1 --target-nanchor 1000 --anchor-growth-policy strategy4 --mark-frac 0.75 --mark-cap 0.30 --run-both-cm 1 --cm-list 4,9 --outer-iters-cm9 12 --cm-seed-offset 0 --compare-metric H1_raw --adaptive uniform --eta-power 1.5 --laplace-h 1e-3 --whiten-mode energy --whiten-eps 1e-12 --kernel wendland_c2 --kernel-cutoff 4.0 --nq-global 65536 --ncand 65536 --nq-factor 4.0 --kdtree-prune 1 --use-stencil-bank 1 --kdtree-report 1 --deterministic-batching 1 --freeze-candidates 1 --disable-xla 1 --h1-use-giqmc 1 --h1-freeze-importance 1 --h1-freeze-after-calls 1 --h1-mono-enforce 0 --h1-mono-hard 0 --lbfgs-maxiter-first 0 --lbfgs-maxiter-next 0 | tee "$OUT/log.txt"
+
+
+دستور اجرای patchless_extract_history_from_runlog.py
+
+PY=/home/amirhossein/venvs/tf/bin/python
+SCR=/home/amirhossein/projects/tfproj/rbfproj/patchless_extract_history_from_runlog.py
+
+$PY $SCR --runlog /home/amirhossein/projects/tfproj/rbfproj/runs/patchless_check_20260312_133444/log.txt \
+  --out-prefix /home/amirhossein/projects/tfproj/rbfproj/runs/patchless_check_20260312_133444/history_strategy1 && \
+$PY $SCR --runlog /home/amirhossein/projects/tfproj/rbfproj/run_strategy2/gtx1650_cm4_cm9_journal_grade_20260323_141718/log.txt \
+  --out-prefix /home/amirhossein/projects/tfproj/rbfproj/run_strategy2/gtx1650_cm4_cm9_journal_grade_20260323_141718/history_strategy2 && \
+$PY $SCR --runlog /home/amirhossein/projects/tfproj/rbfproj/run_strategy3/gtx1650_strategy3_opt_20260327_201448/log.txt \
+  --out-prefix /home/amirhossein/projects/tfproj/rbfproj/run_strategy3/gtx1650_strategy3_opt_20260327_201448/history_strategy3
+
+دستور اجرای همه استراتژی ها
+
+PY=/home/amirhossein/venvs/tf/bin/python
+
+$PY /home/amirhossein/projects/tfproj/rbfproj/patchless_fig13_plot_table1.py \
+  --outdir /home/amirhossein/projects/tfproj/rbfproj/out_fig13_final \
+  --s1_cm4 /home/amirhossein/projects/tfproj/rbfproj/runs/patchless_check_20260312_133444/history_strategy1_CM4.npz \
+  --s1_cm9 /home/amirhossein/projects/tfproj/rbfproj/runs/patchless_check_20260312_133444/history_strategy1_CM9.npz \
+  --s2_cm4 /home/amirhossein/projects/tfproj/rbfproj/run_strategy2/gtx1650_cm4_cm9_journal_grade_20260323_141718/history_strategy2_CM4.npz \
+  --s2_cm9 /home/amirhossein/projects/tfproj/rbfproj/run_strategy2/gtx1650_cm4_cm9_journal_grade_20260323_141718/history_strategy2_CM9.npz \
+  --s3_cm4 /home/amirhossein/projects/tfproj/rbfproj/run_strategy3/gtx1650_strategy3_opt_20260327_201448/history_strategy3_CM4.npz \
+  --s3_cm9 /home/amirhossein/projects/tfproj/rbfproj/run_strategy3/gtx1650_strategy3_opt_20260327_201448/history_strategy3_CM9.npz \
+  --s4_cm4 /home/amirhossein/projects/tfproj/rbfproj/run_strategy4/patchless_strategy4_20260411_125547/history_strategy4_CM4.npz \
+  --s4_cm9 /home/amirhossein/projects/tfproj/rbfproj/run_strategy4/patchless_strategy4_20260411_125547/history_strategy4_CM9.npz \
+  --ref_cm4 "/home/amirhossein/projects/tfproj/Reference VPINN/ref_vpinn_CM4.csv" \
+  --ref_cm9 "/home/amirhossein/projects/tfproj/Reference VPINN/ref_vpinn_CM9.csv"
+
+پلات کردن نقاط استراتژی 4:
+
+OUT=/home/amirhossein/projects/tfproj/rbfproj/run_strategy4/patchless_strategy4_20260411_125547/out_fig14_15_final; PY=/home/amirhossein/venvs/tf/bin/python; \
+$PY /home/amirhossein/projects/tfproj/rbfproj/patchless_fig14_15_strategy4.py --outdir "$OUT" \
+--cm4-npz /home/amirhossein/projects/tfproj/rbfproj/run_strategy4/patchless_strategy4_20260411_125547/snapshots_strategy4_CM4.npz \
+--cm9-npz /home/amirhossein/projects/tfproj/rbfproj/run_strategy4/patchless_strategy4_20260411_125547/snapshots_strategy4_CM9.npz \
+--indicator r2 --cm4-counts 25,50,200,400,800,1000 --cm9-counts 25,50,200,400,800,1000 \
+--size-scale 2500 --size-min 2 --size-max 100
+
+
+17دستور اجرای شکل 
+
+S="/home/amirhossein/projects/tfproj/rbfproj"; PY="/home/amirhossein/venvs/tf/bin/python"; SCRIPT="$S/patchless_fig17_problem35_strat12_fd_stable_v2_original_logic.py"; cd "$S" || exit 1; set -euo pipefail; RUN="problem35_fig17_patchless_adamonly_ultra_$(date +%Y%m%d_%H%M%S)"; OUT="$S/runs/$RUN"; mkdir -p "$OUT"; export CUDA_VISIBLE_DEVICES=0 TF_CPP_MIN_LOG_LEVEL=2 TF_FORCE_GPU_ALLOW_GROWTH=true TF_GPU_ALLOCATOR=cuda_malloc_async TF_XLA_FLAGS="--tf_xla_auto_jit=0" TF_DETERMINISTIC_OPS=1 CUBLAS_WORKSPACE_CONFIG=":16:8" PYTHONHASHSEED=0; "$PY" "$SCRIPT" --outdir "$OUT" --seed 2000 --lift zero --anchor-init 25 --base-add-count 20 --n-branch-refines 2 --target-nanchor 160 --layers 5 --width 48 --lr0 2e-3 --lr1 2e-5 --lambda-reg 1e-5 --w-pde 1.0 --w-energy 0.0 --adam-steps-first 8000 --adam-steps-after-grow 5000 --lbfgs-first 0 --lbfgs-next 0 --lbfgs-ftol 1e-14 --lbfgs-gtol 1e-8 --lbfgs-maxcor 20 --lbfgs-maxfun 0 --adam-point-batch 384 --adam-anchor-batch 16 --adam-grad-accum 16 --eval-point-batch 384 --eval-anchor-batch 24 --lbfgs-point-batch 128 --lbfgs-anchor-batch 24 --nq-global 16384 --ncand 16384 --qmc-kind sobol --qmc-scramble 1 --kernel wendland_c2 --ell0 0.15 --ell-min 0.015 --ell-sched-p 0.5 --cutoff 3.6 --ell-from-h 1 --ell-c-rho 2.0 --domain-normalize 1 --whiten-eps 1e-12 --add-frac-max 0.35 --min-add 8 --max-add 32 --mark-frac 0.50 --mark-cap 0.15 --child-a-ratio 1.15 --child-lam-lo 0.9 --child-lam-hi 1.1111111111111112 --child-oversample 4 --fill-global 1 --min-sep-alpha 0.60 --reject-max-tries 250000 --eta-power 1.5 --eta-eps 1e-12 --adf-m 2 --adf-eps 1e-12 --h1-ncells 221 --h1-gauss-n 4 --h1-eval-chunk 4096 --snapshot-every 1 --progress-every 50 --disable-meta-optimizer 1 --disable-arithmetic-optimizer 1 --disable-dependency-optimizer 1 | tee "$OUT/log.txt"
+
+
+
+OUT_BASE=/home/amirhossein/projects/tfproj/rbfproj/problem35_fig17_patchless_final_20260413_181109
+OUT_FIG18=$OUT_BASE/fig18
+
+mkdir -p "$OUT_FIG18"
+
+CUDA_VISIBLE_DEVICES=0 \
+/home/amirhossein/venvs/tf/bin/python \
+/home/amirhossein/projects//tfproj/rbfproj/patchless_fig18_problem35.py \
+  --outdir "$OUT_FIG18" \
+  --npz "$OUT_BASE/figure18_problem35_patchless.npz" \
+  --size-scale 2500 \
+  --size-min 2 \
+  --size-max 100 \
+  2>&1 | tee "$OUT_FIG18/fig18.log"
